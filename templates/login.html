@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Login</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="login-page">
+  <div class="login-container">
+    <img src="{{ url_for('static', filename='wheat_logo.jpg') }}" alt="Logo" class="logo">
+    
+    {% if error %}
+      <p class="error">{{ error }}</p>
+    {% endif %}
+
+    <form method="POST">
+      <input type="text" name="username" placeholder="Username" required>
+      <input type="password" name="password" placeholder="Password" required>
+      <button type="submit">LOGIN</button>
+    </form>
+
+    <div class="new-user">
+      <a href="#">New User?</a>
+    </div>
+  </div>
+</body>
+</html>
