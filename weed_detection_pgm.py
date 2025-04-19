@@ -4,9 +4,15 @@ import numpy as np
 import pandas as pd
 import json
 import uuid
-from pgmpy.models import DiscreteBayesianNetwork as BayesianNetwork
-from pgmpy.estimators import MaximumLikelihoodEstimator
-from pgmpy.inference import VariableElimination
+
+try:
+    from pgmpy.models import DiscreteBayesianNetwork as BayesianNetwork
+    from pgmpy.estimators import MaximumLikelihoodEstimator
+    from pgmpy.inference import VariableElimination
+    PGM_ENABLED = True
+except Exception:
+    # pgmpy or torch.optim missing → disable PGM logic
+    PGM_ENABLED = False
 
 # —————————————————————————————————————
 # 1) Load & extract features just as you had them
@@ -71,9 +77,8 @@ if not df.empty:
 # 3) Train your Bayes net (only if we have data)
 # —————————————————————————————————————
 inference = None
-_bin2idx = {'Low':0, 'Medium':1, 'High':2}
-
-if not df.empty:
+# only train if pgmpy imports succeeded
+if PGM_ENABLED and not df.empty:
     model = BayesianNetwork([('Green','IsWeed'), ('EdgeDensity','IsWeed')])
     model.fit(df[['Green','EdgeDensity','IsWeed']], estimator=MaximumLikelihoodEstimator)
     inference = VariableElimination(model)
@@ -114,7 +119,7 @@ def run_detection(image_path):
         edge_density = edges.sum() / denom
 
         # bin into Low/Med/High
-        if inference:
+        if PGM_ENABLED and inference:
             green_lbl = pd.cut([avg_color[1]], bins=3, labels=["Low","Medium","High"])[0]
             edge_lbl  = pd.cut([edge_density], bins=3, labels=["Low","Medium","High"])[0]
             evidence  = {
