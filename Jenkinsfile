@@ -22,10 +22,11 @@ pipeline {
 
     stage('Test') {
       steps {
+        bat 'echo %CD%'
+        bat 'echo PYTHONPATH=%PYTHONPATH%'
         bat 'if not exist reports mkdir reports'
         bat 'python -m pytest --junitxml=reports/results.xml'
         bat 'if not exist reports mkdir reports'
-        bat 'python -c "echo PYTHONPATH=%PYTHONPATH%"'
         bat 'python -m pytest --junitxml=reports/results.xml'
       }
       post {
