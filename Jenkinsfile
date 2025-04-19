@@ -3,6 +3,7 @@ pipeline {
 
   environment {
     DOCKERHUB_CRED = 'f4bb4469-7e31-4cfc-a752-062d8c99b139'
+    PYTHONPATH     = "${WORKSPACE}"
   }
 
   stages {
@@ -22,6 +23,9 @@ pipeline {
     stage('Test') {
       steps {
         bat 'if not exist reports mkdir reports'
+        bat 'python -m pytest --junitxml=reports/results.xml'
+        bat 'if not exist reports mkdir reports'
+        bat 'python -c "echo PYTHONPATH=%PYTHONPATH%"'
         bat 'python -m pytest --junitxml=reports/results.xml'
       }
       post {
