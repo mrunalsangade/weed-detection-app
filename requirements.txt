@@ -5,3 +5,5 @@ opencv-python
 pgmpy
 Pillow
 pytest
+scipy
+lark-parser
